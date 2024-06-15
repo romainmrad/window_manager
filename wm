@@ -1,0 +1,135 @@
+#!/bin/zsh
+
+# ANSI color escape sequences with bold
+R='\e[1;31m'        # Bold Red
+G='\e[1;32m'        # Bold Green
+Y='\e[1;33m'        # Bold Yellow
+B='\e[1;34m'        # Bold Blue
+RESET='\e[0m'       # Reset colors
+BOLD='\e[1m'        # Bold text
+
+check_yabai_service() {
+    pgrep -q yabai
+    return $?
+}
+
+check_skhd_service() {
+    pgrep -q skhd
+    return $?
+}
+
+# Check the command-line argument
+case "$1" in
+    start)
+        check_yabai_service
+        yabai_status=$?
+        check_skhd_service
+        skhd_status=$?
+        if [ $yabai_status -ne 0 ] && [ $skhd_status -ne 0 ]; then
+            yabai --start-service
+            skhd --start-service
+            echo "${G}Window manager:${RESET} services started"
+        else
+            echo "${R}Window manager:${RESET} nothing to start, services are already up and running"
+        fi
+        ;;
+    stop)
+        check_yabai_service
+        yabai_status=$?
+        check_skhd_service
+        skhd_status=$?
+        if [ $yabai_status -eq 0 ] && [ $skhd_status -eq 0 ]; then
+            yabai --stop-service
+            skhd --stop-service
+            echo "${G}Window manager:${RESET} services stopped"
+        else
+            echo "${R}Window manager:${RESET} nothing to stop, services are not running"
+            exit 1
+        fi
+        ;;
+    restart)
+        check_yabai_service
+        yabai_status=$?
+        check_skhd_service
+        skhd_status=$?
+        if [ $yabai_status -eq 0 ] && [ $skhd_status -eq 0 ]; then
+            yabai --stop-service
+            skhd --stop-service
+            yabai --start-service
+            skhd --start-service
+            echo "${G}Window manager:${RESET} services restarted"
+        else
+            echo "${R}Window manager:${RESET} nothing to restart, services are not running"
+            exit 1
+        fi
+        ;;
+    status)
+        check_yabai_service
+        yabai_status=$?
+        check_skhd_service
+        skhd_status=$?
+        if [ $yabai_status -eq 0 ] && [ $skhd_status -eq 0 ]; then
+            echo "${G}Window manager:${RESET} services are up and running"
+        else
+            echo "${R}Window manager:${RESET} services are not running"
+            exit 1
+        fi
+        ;;
+    config)
+        case "$2" in
+            --yabai)
+                echo "${G}Window manager:${RESET} Yabai configuration\n${Y} ---- Start of configuration ----${RESET}\n"
+                bat --style=plain ~/.config/yabai/yabairc
+                echo "\n${Y} ----- End of configuration -----${RESET}"
+                ;;
+            --skhd)
+                echo "${G}Window manager:${RESET} SKHD configuration\n${Y} ---- Start of configuration ----${RESET}\n"
+                bat --style=plain ~/.config/skhd/skhdrc
+                echo "\n${Y} ----- End of configuration -----${RESET}"
+                ;;
+            *)
+                echo "${R}Window manager:${RESET} incorrect usage '$2' \nAvailable arguments are: ${B}--yabai${RESET}, ${B}--skhd${RESET}"
+                exit 1
+                ;;
+        esac
+        ;;
+    edit)
+        case "$2" in
+            --yabai)
+                nvim ~/.config/yabai/yabairc
+                ;;
+            --skhd)
+                nvim ~/.config/skhd/skhdrc
+                ;;
+            *)
+                echo "${R}Window manager:${RESET} incorrect usage '$2'\nAvailable arguments are: ${B}--yabai${RESET}, ${B}--skhd${RESET}"
+                exit 1
+                ;;
+        esac
+        ;;
+    help)
+        echo "
+${G}Window manager${RESET} is a minimalist CLI that manages Yabai and SKHD services
+
+${Y}Commands:${RESET}
+    ${B}start${RESET}:      start services
+    ${B}stop${RESET}:       stop services
+    ${B}restart${RESET}:    restart services
+    ${B}status${RESET}:     services status
+    ${B}config${RESET}:     print to stdout rc config file
+    ${B}edit${RESET}:       open rc config file in nvim
+    ${B}help${RESET}:       print to stdout help about usage
+
+${Y}Arguments:${RESET} [available for config and edit commands]
+    ${B}--yabai${RESET}:	edit the yabairc file
+    ${B}--skhd${RESET}:	edit the skhdrc file
+        "
+        ;;
+    *)
+        echo "${R}Window manager:${RESET} incorrect usage '$1'\nAvailable functions are: ${B}start${RESET}, ${B}stop${RESET}, ${B}restart${RESET}, ${B}status${RESET}, ${B}config${RESET}, ${B}edit${RESET}, ${B}help${RESET}"
+        exit 1
+        ;;
+esac
+
+exit 0
+
