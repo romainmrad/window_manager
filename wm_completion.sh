@@ -4,12 +4,12 @@ _wm_completions()
 {
     local cur="${COMP_WORDS[COMP_CWORD]}"
     local commands="
-	start 
-	stop 
-	restart 
-	status 
-	config 
-	edit 
+	start
+	stop
+	restart
+	status
+	show-config
+	configure
 	help
 	"
 

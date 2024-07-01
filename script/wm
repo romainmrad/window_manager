@@ -33,15 +33,15 @@ ${UY}Commands${RESET}:
     ${B}stop${RESET}:       stop services
     ${B}restart${RESET}:    restart services
     ${B}status${RESET}:     services status
-    ${B}config${RESET}:     print to stdout rc config file
-    ${B}edit${RESET}:       open rc config file in nvim
+    ${B}show-config${RESET}:     print to stdout rc config file
+    ${B}configure${RESET}:       open rc config file in nvim
     ${B}help${RESET}:       print to stdout help about usage
 
 ${UY}Options${RESET}: [available for config and edit commands]
     ${B}--yabai${RESET}:	edit the yabairc file
     ${B}--skhd${RESET}:	edit the skhdrc file
         "
-} 
+}
 
 # Check the command-line argument
 case "$1" in
@@ -100,7 +100,7 @@ case "$1" in
             exit 1
         fi
         ;;
-    config)
+    show-config)
         case "$2" in
             --yabai)
                 echo "${G}Window manager${RESET}: Yabai configuration\n${Y} ---- Start of configuration ----${RESET}\n"
@@ -118,7 +118,7 @@ case "$1" in
                 ;;
         esac
         ;;
-    edit)
+    configure)
         case "$2" in
             --yabai)
                 nvim ~/.config/yabai/yabairc
@@ -143,7 +143,7 @@ case "$1" in
         ;;
 
     *)
-        echo "${R}Window manager:${RESET} incorrect usage '$1'\nAvailable functions are: ${B}start${RESET}, ${B}stop${RESET}, ${B}restart${RESET}, ${B}status${RESET}, ${B}config${RESET}, ${B}edit${RESET}, ${B}help${RESET}"
+        echo "${R}Window manager:${RESET} incorrect usage '$1'\nAvailable functions are: ${B}start${RESET}, ${B}stop${RESET}, ${B}restart${RESET}, ${B}status${RESET}, ${B}show-config${RESET}, ${B}configure${RESET}, ${B}help${RESET}"
         exit 1
         ;;
 esac
