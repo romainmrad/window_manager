@@ -143,7 +143,7 @@ case "$1" in
 		print_help
         ;;
 	untrack)
-		echo yabai -m rule --add app="^$2$" manage=off >> ~/.config/yabai/yabairc
+		echo "yabai -m rule --add app='^$2$'" manage=off >> ~/.config/yabai/yabairc
 		yabai --stop-service
         skhd --stop-service
         yabai --start-service
