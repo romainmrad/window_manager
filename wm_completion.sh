@@ -10,6 +10,7 @@ _wm_completions()
 	status
 	show-config
 	configure
+	untrack
 	help
 	"
 

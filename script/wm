@@ -29,17 +29,18 @@ print_help() {
 ${UG}Window manager${RESET} is a minimalist CLI that manages Yabai and SKHD services
 
 ${UY}Commands${RESET}:
-    ${B}start${RESET}:      start services
-    ${B}stop${RESET}:       stop services
-    ${B}restart${RESET}:    restart services
-    ${B}status${RESET}:     services status
-    ${B}show-config${RESET}:     print to stdout rc config file
-    ${B}configure${RESET}:       open rc config file in nvim
-    ${B}help${RESET}:       print to stdout help about usage
+    ${B}start${RESET}:		start services
+    ${B}stop${RESET}:		stop services
+    ${B}restart${RESET}:		restart services
+    ${B}status${RESET}:		services status
+    ${B}show-config${RESET}:	print to stdout rc config file
+    ${B}configure${RESET}:		open rc config file in nvim
+    ${B}untrack${RESET}:		untrack an app
+    ${B}help${RESET}:		print to stdout help about usage
 
 ${UY}Options${RESET}: [available for config and edit commands]
-    ${B}--yabai${RESET}:	edit the yabairc file
-    ${B}--skhd${RESET}:	edit the skhdrc file
+    ${B}--yabai${RESET}:		edit the yabairc file
+    ${B}--skhd${RESET}:		edit the skhdrc file
         "
 }
 
@@ -141,9 +142,15 @@ case "$1" in
 	--help)
 		print_help
         ;;
-
+	untrack)
+		echo yabai -m rule --add app="^$2$" manage=off >> ~/.config/yabai/yabairc
+		yabai --stop-service
+        skhd --stop-service
+        yabai --start-service
+        skhd --start-service
+		;;
     *)
-        echo "${R}Window manager:${RESET} incorrect usage '$1'\nAvailable functions are: ${B}start${RESET}, ${B}stop${RESET}, ${B}restart${RESET}, ${B}status${RESET}, ${B}show-config${RESET}, ${B}configure${RESET}, ${B}help${RESET}"
+        echo "${R}Window manager:${RESET} incorrect usage '$1'\nAvailable functions are: ${B}start${RESET}, ${B}stop${RESET}, ${B}restart${RESET}, ${B}status${RESET}, ${B}show-config${RESET}, ${B}configure${RESET}, ${B}untrack${RESET}, ${B}help${RESET}"
         exit 1
         ;;
 esac
